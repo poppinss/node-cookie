@@ -1,0 +1,30 @@
+{
+  "name": "node-cookie",
+  "version": "1.0.0",
+  "description": "Set's cookies on response and reads cookies from request",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test",
+    "coverage": "istanbul cover _mocha test"
+  },
+  "keywords": [
+    "cookies",
+    "cookie-parser",
+    "signed-cookies"
+  ],
+  "author": "amanvirk",
+  "license": "MIT",
+  "dependencies": {
+    "cookie": "^0.2.2",
+    "cookie-signature": "^1.0.6",
+    "keygrip": "git://github.com/crypto-utils/keygrip.git"
+  },
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "co-mocha": "^1.1.2",
+    "co-supertest": "0.0.10",
+    "istanbul": "^0.3.22",
+    "mocha": "^2.3.3",
+    "supertest": "^1.1.0"
+  }
+}
