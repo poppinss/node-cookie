@@ -11,7 +11,7 @@ const Keygrip   = require('keygrip')
 const signature = require('cookie-signature')
 
 /**
- * @description parse request cookies from request header
+ * @description parses request cookies from request header
  * @module Cookie
  * @type {Object}
  */
@@ -20,6 +20,13 @@ let Cookie = exports = module.exports = {}
 /**
  * @description reads cookie header from request and return
  * parsed cookies as an object
+ * @example
+ *   // parsing plain cookies
+ *   Cookie.parse(request)
+ *   // if cookies are signed using a secret
+ *   Cookie.parse(request, secret)
+ *   // if cookies are encrypted using a secret
+ *   Cookie.parse(request, secret, true)
  * @method parse
  * @param  {Object} request
  * @param  {String} secret
@@ -52,11 +59,13 @@ Cookie.parse = function (request, secret, decrypt) {
   }
 
   /**
-   * unsinging cookie if secret is set or
-   * sending them back as plain values
+   * storing unsigned cookies after looping
+   * through each of them and transforming
+   * them to back to useable format.
    * @type {Object}
    */
   let unsignedCookies = {}
+
   Object.keys(requestCookies).forEach(function (index) {
 
     if(decrypt && secret){
