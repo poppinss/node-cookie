@@ -84,6 +84,25 @@ describe('Cookie', function () {
 
   })
 
+  it('should not return cookie value when unable to decrypt cookie', function * () {
+
+    const SECRET = 'bubble'
+    const keygrip = new Keygrip([SECRET])
+    const cookieVal = sig.sign('foo',SECRET)
+    const encryptedVal = keygrip.encrypt(cookieVal).toString('base64')
+
+    const server = http.createServer(function (req,res) {
+      const cookies = Cookie.parse(req,'bubblegum',true)
+      res.writeHead(200,{"content-type": "application/json"})
+      res.write(JSON.stringify({cookies}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Cookie',['user='+encryptedVal]).expect(200).end()
+    expect(res.body.cookies).deep.equal({})
+
+  })
+
   it('should decrypt and unsign cookies from an array', function * () {
 
     const SECRET = 'bubblegum'
@@ -138,8 +157,7 @@ describe('Cookie', function () {
   it('should create plain cookies to be set on response', function * () {
 
     const server = http.createServer(function (req,res) {
-      const cookie = Cookie.create('name','foo')
-      res.setHeader('Set-Cookie',cookie.cookie)
+      const cookie = Cookie.create(req, res, 'name','foo')
       res.writeHead(200,{"content-type": "application/json"})
       res.end()
     })
@@ -154,8 +172,7 @@ describe('Cookie', function () {
     const valueToBe = sig.sign('foo',SECRET)
 
     const server = http.createServer(function (req,res) {
-      const cookie = Cookie.create('name','foo', {}, SECRET)
-      res.setHeader('Set-Cookie',cookie.cookie)
+      Cookie.create(req, res, 'name','foo', {}, SECRET)
       res.writeHead(200,{"content-type": "application/json"})
       res.end()
     })
@@ -172,8 +189,7 @@ describe('Cookie', function () {
     valueToBe = keygrip.encrypt(valueToBe).toString('base64')
 
     const server = http.createServer(function (req,res) {
-      const cookie = Cookie.create('name','foo', {}, SECRET, true)
-      res.setHeader('Set-Cookie',cookie.cookie)
+      Cookie.create(req, res, 'name','foo', {}, SECRET, true)
       res.writeHead(200,{"content-type": "application/json"})
       res.end()
     })
@@ -182,30 +198,10 @@ describe('Cookie', function () {
     expect(res.headers['set-cookie']).deep.equal(['name='+queryString.escape(valueToBe)])
   })
 
-  it('should set cookies via set method', function * () {
+  it('should set multiple cookies on response', function * () {
 
     const SECRET = 'bubblegum'
     const keygrip = new Keygrip([SECRET])
-    let valueToBe = sig.sign('foo',SECRET)
-    valueToBe = keygrip.encrypt(valueToBe).toString('base64')
-
-    const server = http.createServer(function (req,res) {
-      const cookie = Cookie.create('name','foo', {}, SECRET, true)
-      Cookie.setHeader(res,[cookie])
-      res.writeHead(200,{"content-type": "application/json"})
-      res.end()
-    })
-
-    const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.headers['set-cookie']).deep.equal(['name='+queryString.escape(valueToBe)])
-
-  })
-
-  it('should set multiple cookies via set method', function * () {
-
-    const SECRET = 'bubblegum'
-    const keygrip = new Keygrip([SECRET])
-    let cookies = []
     let valueToBe = sig.sign('foo',SECRET)
     valueToBe = keygrip.encrypt(valueToBe).toString('base64')
 
@@ -215,10 +211,8 @@ describe('Cookie', function () {
 
     const server = http.createServer(function (req,res) {
 
-      cookies.push(Cookie.create('name','foo', {}, SECRET, true))
-      cookies.push(Cookie.create('age',22, {}, SECRET, true))
-
-      Cookie.setHeader(res,cookies)
+      Cookie.create(req, res, 'name','foo', {}, SECRET, true)
+      Cookie.create(req, res, 'age',22, {}, SECRET, true)
       res.writeHead(200,{"content-type": "application/json"})
       res.end()
     })
@@ -238,15 +232,39 @@ it('should set object as a cookie value', function * () {
     valueToBe = keygrip.encrypt(valueToBe).toString('base64')
 
     const server = http.createServer(function (req,res) {
-
-      cookies.push(Cookie.create('user',data, {}, SECRET, true))
-      Cookie.setHeader(res,cookies)
+      Cookie.create(req, res, 'user',data, {}, SECRET, true)
       res.writeHead(200,{"content-type": "application/json"})
       res.end()
     })
 
     const res = yield supertest(server).get('/').expect(200).end()
     expect(res.headers['set-cookie']).deep.equal(['user='+queryString.escape(valueToBe)])
+  })
+
+  it('should clear an existing cookie', function * () {
+
+    let cookies = []
+
+    const server = http.createServer(function (req,res) {
+      Cookie.clear(req, res, 'user')
+      res.writeHead(200,{"content-type": "application/json"})
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Cookie',['user=foo']).expect(200).end()
+    expect(res.headers['set-cookie']).deep.equal(['user=foo','user=; Expires=Thu, 01 Jan 1970 00:00:00 GMT'])
+  })
+
+  it('should not override existing cookies while setting up new cookies', function * () {
+
+    const server = http.createServer(function (req,res) {
+      Cookie.create(req, res, 'age','22')
+      res.writeHead(200,{"content-type": "application/json"})
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Cookie',['user=foo']).expect(200).end()
+    expect(res.headers['set-cookie']).deep.equal(['user=foo','age=22'])
   })
 
 })

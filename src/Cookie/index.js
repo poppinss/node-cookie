@@ -9,6 +9,8 @@
 const parser    = require('cookie')
 const Keygrip   = require('keygrip')
 const signature = require('cookie-signature')
+const merge     = require('utils-merge')
+const debug     = require('debug')('poopins:cookie')
 
 /**
  * @description parses request cookies from request header
@@ -36,6 +38,8 @@ let Cookie = exports = module.exports = {}
 Cookie.parse = function (request, secret, decrypt) {
 
   let keygrip = null
+
+  debug('parsing request cookies')
 
   /**
    * reading cookies from request headers
@@ -72,9 +76,14 @@ Cookie.parse = function (request, secret, decrypt) {
       requestCookies[index] = Cookie._decryptCookie(keygrip, requestCookies[index])
     }
 
-    unsignedCookies[index] = secret
-      ? Cookie._jsonCookie(signature.unsign(requestCookies[index],secret))
-      : Cookie._jsonCookie(requestCookies[index])
+    if(requestCookies[index]){
+      unsignedCookies[index] = secret
+        ? Cookie._jsonCookie(signature.unsign(requestCookies[index],secret))
+        : Cookie._jsonCookie(requestCookies[index])
+    }
+    else{
+      debug('unable to decrypt cookie, omitting from return object')
+    }
   })
 
   return unsignedCookies
@@ -83,9 +92,9 @@ Cookie.parse = function (request, secret, decrypt) {
 /**
  * @description decrypting cookie value using keygrip instance
  * @method _decryptCookie
- * @param  {Object}       keygrip [description]
- * @param  {Mixed}       value   [description]
- * @return {Mixed}               [description]
+ * @param  {Object}       keygrip
+ * @param  {Mixed}       value
+ * @return {Mixed}
  * @private
  */
 Cookie._decryptCookie = function (keygrip, value) {
@@ -100,8 +109,8 @@ Cookie._decryptCookie = function (keygrip, value) {
  * @description converting object values back to
  * object if they have j: prepended on value
  * @method _jsonCookie
- * @param  {String}    str [description]
- * @return {Mixed}        [description]
+ * @param  {String}    str
+ * @return {Mixed}
  * @private
  */
 Cookie._jsonCookie = function (str) {
@@ -109,6 +118,7 @@ Cookie._jsonCookie = function (str) {
     return str
   }
   try {
+    debug('detected javascript object inside cookie')
     return JSON.parse(str.slice(2))
   } catch (err) {
     return undefined
@@ -119,15 +129,15 @@ Cookie._jsonCookie = function (str) {
  * @description create a new cookie object with final
  * value to set on header
  * @method create
- * @param  {String} key     [description]
- * @param  {Mixed} value   [description]
- * @param  {Object} options [description]
- * @param  {String} secret  [description]
- * @param  {Boolean} encrypt [description]
- * @return {Object}         [description]
+ * @param  {String} key
+ * @param  {Mixed} value
+ * @param  {Object} options
+ * @param  {String} secret
+ * @param  {Boolean} encrypt
+ * @return {Object}
  * @public
  */
-Cookie.create = function (key, value, options, secret, encrypt) {
+Cookie.create = function (req, res, key, value, options, secret, encrypt) {
 
   /**
    * stringify object is value has
@@ -152,24 +162,58 @@ Cookie.create = function (key, value, options, secret, encrypt) {
       cookieValue = keygrip.encrypt(cookieValue).toString('base64')
     }
   }
-
   const cookie = parser.serialize(key, String(cookieValue), options)
-  return {key,cookie}
+  Cookie.append(req, res, cookie)
 }
 
 /**
- * @description set cookie header using an array of cookie
- * @method setHeader
- * @param  {Object}  response [description]
- * @param  {Array}  cookies  [description]
- * @public
+ * @description appends cookie to existing cookies, it can be on
+ * request object or response object.
+ * @method append
+ * @param  {Object} req
+ * @param  {Object} res
+ * @param  {Array} cookie
+ * @return {void}
  */
-Cookie.setHeader = function (response, cookies) {
+Cookie.append = function (req, res, cookie) {
+  /**
+   * reading exisiting request cookies on request
+   * object
+   * @type {Array}
+   */
+  const requestCookies = req.headers['cookie'] || []
 
-  let cookiesArray = []
-  Object.keys(cookies).forEach(function (index) {
-    const cookie = cookies[index].cookie
-    cookiesArray.push(cookie)
-  })
-  response.setHeader('Set-Cookie',cookiesArray)
+  /**
+   * reading existing cookies on response header, they will
+   * exist when cookie.create has been called multiple
+   * times
+   * @type {Array}
+   */
+  const existingCookies = res.getHeader('Set-Cookie') || []
+
+  /**
+   * joining request and response cookies together with
+   * new cookie
+   * @type {Array}
+   */
+  const cookiesArray = existingCookies.concat(requestCookies).concat(cookie)
+
+  res.setHeader('Set-Cookie',cookiesArray)
+}
+
+/**
+ * @description clears existing cookie by setting it's expiry
+ * date in past
+ * @method clear
+ * @param  {Object} req
+ * @param  {Object} res
+ * @param  {String} key
+ * @param  {Object} options
+ * @return {void}
+ */
+Cookie.clear = function (req, res, key, options) {
+  options = options || {}
+  options.expires = new Date(1)
+  const cookie = parser.serialize(key, String(''), options)
+  Cookie.append(req, res, cookie)
 }

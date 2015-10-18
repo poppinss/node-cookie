@@ -4,8 +4,8 @@
   "description": "Set's cookies on response and reads cookies from request",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test",
-    "coverage": "istanbul cover _mocha test"
+    "test": "mocha test --bail",
+    "coverage": "istanbul cover _mocha test --bail"
   },
   "keywords": [
     "cookies",
@@ -17,7 +17,9 @@
   "dependencies": {
     "cookie": "^0.2.2",
     "cookie-signature": "^1.0.6",
-    "keygrip": "git://github.com/crypto-utils/keygrip.git"
+    "debug": "^2.2.0",
+    "keygrip": "git://github.com/crypto-utils/keygrip.git",
+    "utils-merge": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^3.3.0",
