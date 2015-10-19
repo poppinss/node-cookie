@@ -1,7 +1,7 @@
 {
   "name": "node-cookie",
   "version": "1.0.0",
-  "description": "Set's cookies on response and reads cookies from request",
+  "description": "sign, encrypt and parse http cookies",
   "main": "index.js",
   "scripts": {
     "test": "istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
@@ -29,5 +29,16 @@
     "mocha": "^2.3.3",
     "mocha-lcov-reporter": "^1.0.0",
     "supertest": "^1.1.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poppinss/node-cookie.git"
+  },
+  "bugs": {
+    "url": "https://github.com/poppinss/node-cookie/issues"
+  },
+  "homepage": "https://github.com/poppinss/node-cookie#readme"
 }
