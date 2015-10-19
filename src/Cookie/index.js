@@ -9,7 +9,6 @@
 const parser    = require('cookie')
 const Keygrip   = require('keygrip')
 const signature = require('cookie-signature')
-const merge     = require('utils-merge')
 const debug     = require('debug')('poopins:cookie')
 
 /**
