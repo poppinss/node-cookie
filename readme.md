@@ -3,6 +3,9 @@
 
 ![](http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png)
 
+![](https://img.shields.io/travis/poppinss/node-cookie.svg)
+[![Coverage Status](https://coveralls.io/repos/poppinss/node-cookie/badge.svg?branch=master&service=github)](https://coveralls.io/github/poppinss/node-cookie?branch=master)
+
 `node-cookie` is a standalone I/O module for reading and writing cookies on http request.
 Out of the box it has support for
 
