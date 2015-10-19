@@ -12,7 +12,7 @@ const expect      = chai.expect
 const http        = require('http')
 const sig         = require('cookie-signature')
 const Keygrip     = require('keygrip')
-const Cookie      = require('../src/Cookie')
+const Cookie      = require('../')
 const queryString = require('querystring')
 
 require('co-mocha')
