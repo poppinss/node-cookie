@@ -4,7 +4,7 @@
   "description": "Set's cookies on response and reads cookies from request",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test --bail",
+    "test": "istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "coverage": "istanbul cover _mocha test --bail"
   },
   "keywords": [
@@ -24,8 +24,10 @@
     "chai": "^3.3.0",
     "co-mocha": "^1.1.2",
     "co-supertest": "0.0.10",
+    "coveralls": "^2.11.4",
     "istanbul": "^0.3.22",
     "mocha": "^2.3.3",
+    "mocha-lcov-reporter": "^1.0.0",
     "supertest": "^1.1.0"
   }
 }
