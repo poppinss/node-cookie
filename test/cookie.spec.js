@@ -136,6 +136,19 @@ describe('Cookie', function () {
 
   })
 
+  it('should return undefined when cookie starts with j: but is not a valid object', function * () {
+
+    const server = http.createServer(function (req,res) {
+      const cookies = Cookie.parse(req)
+      res.writeHead(200,{"content-type": "application/json"})
+      res.write(JSON.stringify({cookies}))
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').set('Cookie',['cart=j:something']).expect(200).end()
+    expect(res.body.cookies).deep.equal({})
+
+  })
 
   it('should parse and unsign cookies from an array', function * () {
 

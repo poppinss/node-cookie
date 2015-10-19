@@ -24,18 +24,18 @@ let Cookie = exports = module.exports = {}
  * parsed cookies as an object
  * @example
  *   // parsing plain cookies
- *   Cookie.parse(request)
+ *   Cookie.parse(req)
  *   // if cookies are signed using a secret
- *   Cookie.parse(request, secret)
+ *   Cookie.parse(req, secret)
  *   // if cookies are encrypted using a secret
- *   Cookie.parse(request, secret, true)
+ *   Cookie.parse(req, secret, true)
  * @method parse
- * @param  {Object} request
+ * @param  {Object} req
  * @param  {String} secret
  * @param  {Boolean} decrypt
  * @return {Object}
  */
-Cookie.parse = function (request, secret, decrypt) {
+Cookie.parse = function (req, secret, decrypt) {
 
   let keygrip = null
 
@@ -45,7 +45,7 @@ Cookie.parse = function (request, secret, decrypt) {
    * reading cookies from request headers
    * @type {String}
    */
-  let requestCookies = request.headers['cookie']
+  let requestCookies = req.headers['cookie']
   if(!requestCookies) return {}
 
   /**
@@ -163,7 +163,7 @@ Cookie.create = function (req, res, key, value, options, secret, encrypt) {
     }
   }
   const cookie = parser.serialize(key, String(cookieValue), options)
-  Cookie.append(req, res, cookie)
+  Cookie._append(req, res, cookie)
 }
 
 /**
@@ -174,8 +174,9 @@ Cookie.create = function (req, res, key, value, options, secret, encrypt) {
  * @param  {Object} res
  * @param  {Array} cookie
  * @return {void}
+ * @private
  */
-Cookie.append = function (req, res, cookie) {
+Cookie._append = function (req, res, cookie) {
   /**
    * reading exisiting request cookies on request
    * object
@@ -196,8 +197,8 @@ Cookie.append = function (req, res, cookie) {
    * new cookie
    * @type {Array}
    */
-  const cookiesArray = existingCookies.concat(requestCookies).concat(cookie)
 
+  const cookiesArray = existingCookies.concat(requestCookies).concat(cookie)
   res.setHeader('Set-Cookie',cookiesArray)
 }
 
@@ -215,5 +216,5 @@ Cookie.clear = function (req, res, key, options) {
   options = options || {}
   options.expires = new Date(1)
   const cookie = parser.serialize(key, String(''), options)
-  Cookie.append(req, res, cookie)
+  Cookie._append(req, res, cookie)
 }
