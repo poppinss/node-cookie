@@ -138,6 +138,10 @@ Cookie._jsonCookie = function (str) {
  */
 Cookie.create = function (req, res, key, value, options, secret, encrypt) {
 
+  if((typeof(value) === 'object' && Object.keys(value).length === 0) || !value){
+    return
+  }
+
   /**
    * stringify object is value has
    * typeof object, since cookie
@@ -181,7 +185,8 @@ Cookie._append = function (req, res, cookie) {
    * object
    * @type {Array}
    */
-  const requestCookies = req.headers['cookie'] || []
+  let requestCookies = req.headers['cookie'] || []
+  requestCookies = typeof(requestCookies) === 'object' ? requestCookies : [requestCookies]
 
   /**
    * reading existing cookies on response header, they will
@@ -196,8 +201,7 @@ Cookie._append = function (req, res, cookie) {
    * new cookie
    * @type {Array}
    */
-
-  const cookiesArray = existingCookies.concat(requestCookies).concat(cookie)
+  const cookiesArray = existingCookies.concat(requestCookies).concat([cookie])
   res.setHeader('Set-Cookie',cookiesArray)
 }
 
