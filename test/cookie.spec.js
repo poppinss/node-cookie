@@ -280,7 +280,7 @@ it('should set object as a cookie value', function * () {
     expect(res.headers['set-cookie']).deep.equal(['user=foo','age=22'])
   })
 
-  it('should not set cookie when object is empty', function * () {
+  it('should set cookie when object is empty', function * () {
 
     const server = http.createServer(function (req,res) {
       Cookie.create(req, res, 'age',{})
@@ -289,7 +289,7 @@ it('should set object as a cookie value', function * () {
     })
 
     const res = yield supertest(server).get('/').expect(200).end()
-    expect(res.headers['set-cookie']).to.equal(undefined)
+    expect(res.headers['set-cookie']).deep.equal(['age='+ queryString.escape('j:'+JSON.stringify({}))])
   })
 
 })

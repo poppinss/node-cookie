@@ -138,10 +138,6 @@ Cookie._jsonCookie = function (str) {
  */
 Cookie.create = function (req, res, key, value, options, secret, encrypt) {
 
-  if((typeof(value) === 'object' && Object.keys(value).length === 0) || !value){
-    return
-  }
-
   /**
    * stringify object is value has
    * typeof object, since cookie
