@@ -6,10 +6,10 @@
  * MIT Licensed
 */
 
-const parser    = require('cookie')
-const Keygrip   = require('keygrip')
+const parser = require('cookie')
+const Keygrip = require('keygrip')
 const signature = require('cookie-signature')
-const debug     = require('debug')('poopins:cookie')
+const debug = require('debug')('poopins:cookie')
 
 /**
  * @description parses request cookies from request header
@@ -35,7 +35,6 @@ let Cookie = exports = module.exports = {}
  * @return {Object}
  */
 Cookie.parse = function (req, secret, decrypt) {
-
   let keygrip = null
 
   debug('parsing request cookies')
@@ -45,7 +44,7 @@ Cookie.parse = function (req, secret, decrypt) {
    * @type {String}
    */
   let requestCookies = req.headers['cookie']
-  if(!requestCookies) return {}
+  if (!requestCookies) return {}
 
   /**
    * parsing cookies into an object
@@ -57,7 +56,7 @@ Cookie.parse = function (req, secret, decrypt) {
    * if decryption is set create a new instance
    * of keygrip using secret key
    */
-  if(decrypt && secret){
+  if (decrypt && secret) {
     keygrip = new Keygrip([secret])
   }
 
@@ -70,17 +69,15 @@ Cookie.parse = function (req, secret, decrypt) {
   let unsignedCookies = {}
 
   Object.keys(requestCookies).forEach(function (index) {
-
-    if(decrypt && secret){
+    if (decrypt && secret) {
       requestCookies[index] = Cookie._decryptCookie(keygrip, requestCookies[index])
     }
 
-    if(requestCookies[index]){
+    if (requestCookies[index]) {
       unsignedCookies[index] = secret
-        ? Cookie._jsonCookie(signature.unsign(requestCookies[index],secret))
+        ? Cookie._jsonCookie(signature.unsign(requestCookies[index], secret))
         : Cookie._jsonCookie(requestCookies[index])
-    }
-    else{
+    } else {
       debug('unable to decrypt cookie, omitting from return object')
     }
   })
@@ -98,7 +95,7 @@ Cookie.parse = function (req, secret, decrypt) {
  */
 Cookie._decryptCookie = function (keygrip, value) {
   const decrypted = keygrip.decrypt(new Buffer(value, 'base64'))
-  if(decrypted[0]){
+  if (decrypted[0]) {
     return decrypted[0].toString('utf8')
   }
   return null
@@ -137,7 +134,6 @@ Cookie._jsonCookie = function (str) {
  * @public
  */
 Cookie.create = function (req, res, key, value, options, secret, encrypt) {
-
   /**
    * stringify object is value has
    * typeof object, since cookie
@@ -146,17 +142,17 @@ Cookie.create = function (req, res, key, value, options, secret, encrypt) {
    */
   let cookieValue = typeof value === 'object'
     ? 'j:' + JSON.stringify(value)
-    : String(value);
+    : String(value)
 
-  if(secret){
+  if (secret) {
     /**
      * if secret sign cookie
      */
-    cookieValue = signature.sign(cookieValue,secret)
+    cookieValue = signature.sign(cookieValue, secret)
     /**
      * if encrypt and secret encrypt cookie
      */
-    if(encrypt){
+    if (encrypt) {
       const keygrip = new Keygrip([secret])
       cookieValue = keygrip.encrypt(cookieValue).toString('base64')
     }
@@ -182,7 +178,7 @@ Cookie._append = function (req, res, cookie) {
    * @type {Array}
    */
   let requestCookies = req.headers['cookie'] || []
-  requestCookies = typeof(requestCookies) === 'object' ? requestCookies : [requestCookies]
+  requestCookies = typeof (requestCookies) === 'object' ? requestCookies : [requestCookies]
 
   /**
    * reading existing cookies on response header, they will
@@ -198,7 +194,7 @@ Cookie._append = function (req, res, cookie) {
    * @type {Array}
    */
   const cookiesArray = existingCookies.concat(requestCookies).concat([cookie])
-  res.setHeader('Set-Cookie',cookiesArray)
+  res.setHeader('Set-Cookie', cookiesArray)
 }
 
 /**
