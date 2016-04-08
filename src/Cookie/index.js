@@ -158,7 +158,7 @@ Cookie.create = function (req, res, key, value, options, secret, encrypt) {
     }
   }
   const cookie = parser.serialize(key, String(cookieValue), options)
-  Cookie._append(req, res, cookie)
+  Cookie._append(req, res, key, cookie)
 }
 
 /**
@@ -167,19 +167,12 @@ Cookie.create = function (req, res, key, value, options, secret, encrypt) {
  * @method append
  * @param  {Object} req
  * @param  {Object} res
+ * @param  {String} key
  * @param  {Array} cookie
  * @return {void}
  * @private
  */
-Cookie._append = function (req, res, cookie) {
-  /**
-   * reading exisiting request cookies on request
-   * object
-   * @type {Array}
-   */
-  let requestCookies = req.headers['cookie'] || []
-  requestCookies = typeof (requestCookies) === 'object' ? requestCookies : [requestCookies]
-
+Cookie._append = function (req, res, key, cookie) {
   /**
    * reading existing cookies on response header, they will
    * exist when cookie.create has been called multiple
@@ -193,7 +186,10 @@ Cookie._append = function (req, res, cookie) {
    * new cookie
    * @type {Array}
    */
-  const cookiesArray = existingCookies.concat(requestCookies).concat([cookie])
+  const cookiesArray = existingCookies.filter(function (value) {
+    return value.indexOf(`${key}=`) !== 0
+  })
+  cookiesArray.push(cookie)
   res.setHeader('Set-Cookie', cookiesArray)
 }
 

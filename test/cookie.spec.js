@@ -159,6 +159,18 @@ describe('Cookie', function () {
     expect(res.headers['set-cookie']).deep.equal(['name=foo'])
   })
 
+  it('should remove old cookie value when trying to set cookie multiple times', function * () {
+    const server = http.createServer(function (req, res) {
+      Cookie.create(req, res, 'name', 'foo')
+      Cookie.create(req, res, 'name', 'bar')
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.end()
+    })
+
+    const res = yield supertest(server).get('/').expect(200).end()
+    expect(res.headers['set-cookie']).deep.equal(['name=bar'])
+  })
+
   it('should create signed cookies to be set on response', function * () {
     const SECRET = 'bubblegum'
     const valueToBe = sig.sign('foo', SECRET)
@@ -224,28 +236,6 @@ describe('Cookie', function () {
 
     const res = yield supertest(server).get('/').expect(200).end()
     expect(res.headers['set-cookie']).deep.equal(['user=' + queryString.escape(valueToBe)])
-  })
-
-  it('should clear an existing cookie', function * () {
-    const server = http.createServer(function (req, res) {
-      Cookie.clear(req, res, 'user')
-      res.writeHead(200, {'content-type': 'application/json'})
-      res.end()
-    })
-
-    const res = yield supertest(server).get('/').set('Cookie', ['user=foo']).expect(200).end()
-    expect(res.headers['set-cookie']).deep.equal(['user=foo', 'user=; Expires=Thu, 01 Jan 1970 00:00:00 GMT'])
-  })
-
-  it('should not override existing cookies while setting up new cookies', function * () {
-    const server = http.createServer(function (req, res) {
-      Cookie.create(req, res, 'age', '22')
-      res.writeHead(200, {'content-type': 'application/json'})
-      res.end()
-    })
-
-    const res = yield supertest(server).get('/').set('Cookie', ['user=foo']).expect(200).end()
-    expect(res.headers['set-cookie']).deep.equal(['user=foo', 'age=22'])
   })
 
   it('should set cookie when object is empty', function * () {
