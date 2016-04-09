@@ -207,5 +207,5 @@ Cookie.clear = function (req, res, key, options) {
   options = options || {}
   options.expires = new Date(1)
   const cookie = parser.serialize(key, String(''), options)
-  Cookie._append(req, res, cookie)
+  Cookie._append(req, res, key, cookie)
 }
