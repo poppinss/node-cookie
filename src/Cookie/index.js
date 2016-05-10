@@ -110,7 +110,7 @@ Cookie._decryptCookie = function (keygrip, value) {
  * @private
  */
 Cookie._jsonCookie = function (str) {
-  if (str.substr(0, 2) !== 'j:') {
+  if (typeof (str) === 'string' && str.substr(0, 2) !== 'j:') {
     return str
   }
   try {
