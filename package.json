@@ -4,9 +4,9 @@
   "description": "sign, encrypt and parse http cookies",
   "main": "index.js",
   "scripts": {
-    "test": "npm run standard && istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "npm run standard && istanbul cover _mocha test --bail",
-    "standard": "standard test/*.js src/**/*.js"
+    "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "coverage": "npm run lint && istanbul cover _mocha test --bail",
+    "lint": "standard test/*.js src/**/*.js"
   },
   "keywords": [
     "cookies",
