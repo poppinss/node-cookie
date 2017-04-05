@@ -16,21 +16,18 @@
   "author": "amanvirk",
   "license": "MIT",
   "dependencies": {
-    "cookie": "^0.2.2",
+    "cookie": "^0.3.1",
     "cookie-signature": "^1.0.6",
-    "debug": "^2.2.0",
+    "debug": "^2.6.3",
     "keygrip": "git://github.com/crypto-utils/keygrip.git"
   },
   "devDependencies": {
-    "chai": "^3.3.0",
-    "co-mocha": "^1.1.2",
-    "co-supertest": "0.0.10",
-    "coveralls": "^2.11.4",
-    "istanbul": "^0.3.22",
-    "mocha": "^2.3.3",
-    "mocha-lcov-reporter": "^1.0.0",
-    "standard": "^5.4.1",
-    "supertest": "^1.1.0"
+    "coveralls": "^2.13.0",
+    "japa": "^1.0.3",
+    "japa-cli": "^1.0.1",
+    "nyc": "^10.2.0",
+    "standard": "^10.0.0",
+    "supertest": "^3.0.0"
   },
   "directories": {
     "test": "test"
