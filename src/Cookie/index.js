@@ -372,6 +372,7 @@ Cookie.create = function (res, key, value, options = {}, secret = null, encrypt 
  *
  * @return {void}
  *
+ * @example
  * ```js
  * nodeCookie.clear(res, 'sessionId')
  * ```

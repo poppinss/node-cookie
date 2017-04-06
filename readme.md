@@ -67,24 +67,6 @@ http.createServer(function (req, res) {
 
 ## Methods
 
-### getEncrypter
-Returns an encrypter instance to be used for
-encrypting the cookie. Since creating a new
-instance each time is expensive, we cache
-the instances based on secret and it is
-less likely that someone will use a different
-secret for each HTTP request.
-
-**Params**
-
-| Param | Type | Required | Description |
-|-----|-------|------|------|
-| secret | String | Yes | &nbsp; |
-
-**Returns**
-Object
-
-----
 ### parse
 Parses cookies from HTTP header `Cookie` into
 a javascript object. Also it will unsign
@@ -101,6 +83,17 @@ by this library using a secret.
 
 **Returns**
 Object
+
+**Example**
+```js
+nodeCookie.parse(req)
+
+// or if cookies were signed when writing
+nodeCookie.parse(req, 'SECRET')
+
+// also if cookies where encrypted
+nodeCookie.parse(req, 'SECRET', true)
+```
 
 ----
 ### get
@@ -123,6 +116,17 @@ cookies.
 **Returns**
 Mixed
 
+**Example**
+```js
+nodeCookie.get(req, 'sessionId')
+
+// or if session cookie was signed
+nodeCookie.get(req, 'sessionId', 'SECRET')
+
+// also or if session cookie was encrypted
+nodeCookie.get(req, 'sessionId', 'SECRET', true)
+```
+
 ----
 ### create
 Write cookie to the HTTP response object. It will append
@@ -142,6 +146,17 @@ browsers discard the duplicate cookies by themselves
 
 **Returns**
 Void
+
+**Example**
+```js
+nodeCookie.create(res, 'sessionId', 1)
+
+// sign session id
+nodeCookie.create(res, 'sessionId', 1, {}, 'SECRET')
+
+// sign and encrypt session id
+nodeCookie.create(res, 'sessionId', 1, {}, 'SECRET', true)
+```
 
 ----
 ### clear
@@ -163,8 +178,12 @@ the options object.
 **Returns**
 Void
 
-----
+**Example**
+```js
+nodeCookie.clear(res, 'sessionId')
+```
 
+----
 
 [appveyor-image]: https://ci.appveyor.com/api/projects/status/github/poppinss/node-req?branch=master&svg=true&passingText=Passing%20On%20Windows
 [appveyor-url]: https://ci.appveyor.com/project/thetutlage/node-cookie
