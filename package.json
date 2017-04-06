@@ -4,9 +4,13 @@
   "description": "sign, encrypt and parse http cookies",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "npm run lint && istanbul cover _mocha test --bail",
-    "lint": "standard test/*.js src/**/*.js"
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "node --harmony-async-await ./node_modules/.bin/japa",
+    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test:win": "node --harmony-async-await ./node_modules/japa-cli/index.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "cookies",
@@ -25,7 +29,7 @@
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
     "nyc": "^10.2.0",
-    "standard": "^10.0.0",
+    "standard": "^9.0.2",
     "supertest": "^3.0.0"
   },
   "directories": {
