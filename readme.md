@@ -1,21 +1,29 @@
 
 # Node Cookie
 
-![](http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png)
+> Easily parse and write signed & encrypted cookies on Node.js HTTP requests.
 
-![](https://img.shields.io/travis/poppinss/node-cookie.svg)
-[![Coverage Status](https://coveralls.io/repos/poppinss/node-cookie/badge.svg?branch=master&service=github)](https://coveralls.io/github/poppinss/node-cookie?branch=master)
+<br />
 
-`node-cookie` is a standalone I/O module for reading and writing cookies on http request.
-Out of the box it has support for
+<p align="center">
+  <a href="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png">
+    <img src="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png" width="600px" />
+  </a>
+</p>
 
-1. signed cookies.
-2. encrypted cookies.
+<br />
+
+---
+
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Appveyor][appveyor-image]][appveyor-url]
+
 
 ## See also
 
-1. node-req
-2. node-res
+1. [node-req](https://npmjs.org/package/node-req)
+2. [node-res](https://npmjs.org/package/node-res)
 
 ## Basic Setup
 
@@ -26,7 +34,7 @@ const nodeCookie = require('node-cookie')
 http.createServer(function (req, res) {
 
   // this will update set-cookie header on res object.
-  nodeCookie.create(req, res, 'user', 'virk')
+  nodeCookie.create(res, 'user', 'virk')
 
 }).listen(3000)
 ```
@@ -39,7 +47,7 @@ const nodeCookie = require('node-cookie')
 
 http.createServer(function (req, res) {
 
-  nodeCookie.create(req, res, 'user', 'virk', 'secret')
+  nodeCookie.create(res, 'user', 'virk', '16charlongsecret')
 
 }).listen(3000)
 ```
@@ -52,52 +60,117 @@ const nodeCookie = require('node-cookie')
 
 http.createServer(function (req, res) {
 
-  nodeCookie.create(req, res, 'user', 'virk', 'secret', true)
+  nodeCookie.create(res, 'user', 'virk', '16charlongsecret', true)
 
 }).listen(3000)
 ```
 
 ## Methods
 
-#### create (req, res, key, value, secret=null?, encryptCookie=false?)
+### getEncrypter
+Returns an encrypter instance to be used for
+encrypting the cookie. Since creating a new
+instance each time is expensive, we cache
+the instances based on secret and it is
+less likely that someone will use a different
+secret for each HTTP request.
 
-```javascript
-nodeCookie.create(req, res, 'somekey', 'somevalue', 'yoursecret', true)
-```
+**Params**
 
-#### clear (req, res, key)
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| secret | String | Yes | &nbsp; |
 
-remove existing cookie from http request
+**Returns**
+Object
 
-```javascript
-nodeCookie.clear(req, res, 'somekey')
-```
+----
+### parse
+Parses cookies from HTTP header `Cookie` into
+a javascript object. Also it will unsign
+and decrypt cookies encrypted and signed
+by this library using a secret.
 
-#### parse (req, secret=null?,decryptCookie=false?)
+**Params**
 
-parse cookies from request. Note - nodeCookie can only decrypt and unsign cookies created via `node-cookie`
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| req | Object | Yes | &nbsp; |
+| secret  | String | No | &nbsp; |
+| decrypt  | Boolean | No | &nbsp; |
 
-```javascript
-nodeCookie.parse(req, 'somesecret', true)
-```
+**Returns**
+Object
 
-## License 
-(The MIT License)
+----
+### get
+Returns value for a single cookie by its key. It is
+recommended to make use of this function when you
+want to pull a single cookie. Since the `parse`
+method will eagerly unsign and decrypt all the
+cookies.
 
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
+**Params**
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| req | Object | Yes | &nbsp; |
+| key | String | Yes | &nbsp; |
+| secret  | String | No | &nbsp; |
+| decrypt  | Boolean | No | &nbsp; |
+| cookies  | Object | No | Use existing cookies object over re-parsing them from the header. |
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+**Returns**
+Mixed
+
+----
+### create
+Write cookie to the HTTP response object. It will append
+duplicate cookies to the `Set-Cookie` header, since
+browsers discard the duplicate cookies by themselves
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| res | Object | Yes | &nbsp; |
+| key | String | Yes | &nbsp; |
+| value | * | Yes | &nbsp; |
+| options  | Object | No | &nbsp; |
+| secret  | String | No | &nbsp; |
+| encrypt  | Boolean | No | &nbsp; |
+
+**Returns**
+Void
+
+----
+### clear
+Clears the cookie from browser by setting it's expiry
+in past. This is required since there is no other
+way to instruct the browser to delete a cookie.
+
+Also this method will override the `expires` value on
+the options object.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| res | Object | Yes | &nbsp; |
+| key | String | Yes | &nbsp; |
+| options  | Object | No | &nbsp; |
+
+**Returns**
+Void
+
+----
+
+
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/github/poppinss/node-req?branch=master&svg=true&passingText=Passing%20On%20Windows
+[appveyor-url]: https://ci.appveyor.com/project/thetutlage/node-cookie
+
+[npm-image]: https://img.shields.io/npm/v/node-cookie.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/node-cookie
+
+[travis-image]: https://img.shields.io/travis/poppinss/node-cookie/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/poppinss/node-cookie

@@ -27,6 +27,8 @@ const encrypters = {}
  * @param  {String}     secret
  *
  * @return {Object}
+ *
+ * @private
  */
 const getEncrypter = function (secret) {
   if (!encrypters[secret]) {
@@ -231,6 +233,17 @@ Cookie._parseCookies = function (req) {
  * @param  {Boolean} [decrypt = false]
  *
  * @return {Object}
+ *
+ * @example
+ * ```js
+ * nodeCookie.parse(req)
+ *
+ * // or if cookies were signed when writing
+ * nodeCookie.parse(req, 'SECRET')
+ *
+ * // also if cookies where encrypted
+ * nodeCookie.parse(req, 'SECRET', true)
+ * ```
  */
 Cookie.parse = function (req, secret = null, decrypt = false) {
   /**
@@ -264,6 +277,17 @@ Cookie.parse = function (req, secret = null, decrypt = false) {
  * @param  {Object}   [cookies = null] Use existing cookies object over re-parsing them from the header.
  *
  * @return {Mixed}
+ *
+ * @example
+ * ```js
+ * nodeCookie.get(req, 'sessionId')
+ *
+ * // or if session cookie was signed
+ * nodeCookie.get(req, 'sessionId', 'SECRET')
+ *
+ * // also or if session cookie was encrypted
+ * nodeCookie.get(req, 'sessionId', 'SECRET', true)
+ * ```
  */
 Cookie.get = function (req, key, secret = null, decrypt = false, cookies = null) {
   cookies = cookies || Cookie._parseCookies(req)
@@ -304,6 +328,17 @@ Cookie.get = function (req, key, secret = null, decrypt = false, cookies = null)
  * @param  {Boolean} [encrypt = false]
  *
  * @return {void}
+ *
+ * @example
+ * ```js
+ * nodeCookie.create(res, 'sessionId', 1)
+ *
+ * // sign session id
+ * nodeCookie.create(res, 'sessionId', 1, {}, 'SECRET')
+ *
+ * // sign and encrypt session id
+ * nodeCookie.create(res, 'sessionId', 1, {}, 'SECRET', true)
+ * ```
  */
 Cookie.create = function (res, key, value, options = {}, secret = null, encrypt = false) {
   value = Cookie._stringifyJSON(value)
@@ -336,6 +371,10 @@ Cookie.create = function (res, key, value, options = {}, secret = null, encrypt 
  * @param  {Object} [options = {}]
  *
  * @return {void}
+ *
+ * ```js
+ * nodeCookie.clear(res, 'sessionId')
+ * ```
  */
 Cookie.clear = function (res, key, options = {}) {
   options.expires = new Date(1)
