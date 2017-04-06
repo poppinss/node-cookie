@@ -15,6 +15,7 @@ const http = require('http')
 const sig = require('cookie-signature')
 const Cookie = require('../')
 const queryString = require('querystring')
+const simpleEncryptor = require('simple-encryptor')
 
 test.group('Parse Cookies', function () {
   test('return an empty object when no cookies have been set', async function (assert) {
@@ -136,6 +137,94 @@ test.group('Parse Cookies', function () {
     const res = await supertest(server).get('/').set('Cookie', ['user=foo']).expect(200)
     assert.deepEqual(res.body.cookies, {user: 'foo'})
   })
+
+  test('parse encrypted cookies', async function (assert) {
+    const SECRET = Math.random().toString(36).substr(2, 16)
+    const encrypter = simpleEncryptor({
+      key: SECRET,
+      hmac: false
+    })
+
+    const server = http.createServer(function (req, res) {
+      const cookies = Cookie.parse(req, SECRET, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({cookies}))
+      res.end()
+    })
+
+    const age = `s:${sig.sign('22', SECRET)}`
+    const res = await supertest(server).get('/').set('Cookie', [`age=${encrypter.encrypt(age)}`]).expect(200)
+    assert.deepEqual(res.body.cookies, {age: '22'})
+  })
+
+  test('return encrypted value when decrypt is set to false', async function (assert) {
+    const SECRET = Math.random().toString(36).substr(2, 16)
+    const encrypter = simpleEncryptor({
+      key: SECRET,
+      hmac: false
+    })
+
+    const server = http.createServer(function (req, res) {
+      const cookies = Cookie.parse(req, SECRET, false)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({cookies}))
+      res.end()
+    })
+
+    const age = `s:${sig.sign('22', SECRET)}`
+    const res = await supertest(server).get('/').set('Cookie', [`age=${encrypter.encrypt(age)}`]).expect(200)
+    assert.notEqual(res.body.cookies.age, '22')
+  })
+
+  test('return null when secret mis-match', async function (assert) {
+    const SECRET = Math.random().toString(36).substr(2, 16)
+    const encrypter = simpleEncryptor({
+      key: SECRET,
+      hmac: false
+    })
+
+    const server = http.createServer(function (req, res) {
+      const cookies = Cookie.parse(req, Math.random().toString(36).substr(2, 16), true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({cookies}))
+      res.end()
+    })
+
+    const age = `s:${sig.sign('22', SECRET)}`
+    const res = await supertest(server).get('/').set('Cookie', [`age=${encrypter.encrypt(age)}`]).expect(200)
+    assert.isNull(res.body.cookies.age)
+  })
+
+  test('parse a single cookie', async function (assert) {
+    const SECRET = Math.random().toString(36).substr(2, 16)
+    const encrypter = simpleEncryptor({
+      key: SECRET,
+      hmac: false
+    })
+
+    const server = http.createServer(function (req, res) {
+      const age = Cookie.get(req, 'age', SECRET, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({age}))
+      res.end()
+    })
+
+    const age = `s:${sig.sign('22', SECRET)}`
+    const res = await supertest(server).get('/').set('Cookie', [`age=${encrypter.encrypt(age)}`]).expect(200)
+    assert.equal(res.body.age, '22')
+  })
+
+  test('look inside existing cookie set over re-parsing the header', async function (assert) {
+    const server = http.createServer(function (req, res) {
+      const age = Cookie.get(req, 'age', null, false, {age: 26})
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.write(JSON.stringify({age}))
+      res.end()
+    })
+
+    const res = await supertest(server).get('/').set('Cookie', ['age=22']).expect(200)
+    assert.equal(res.body.age, '26')
+  })
 })
 
 // SETTING COOKIES
@@ -197,5 +286,54 @@ test.group('Set Cookies', function () {
 
     const res = await supertest(server).get('/').expect(200)
     assert.deepEqual(res.headers['set-cookie'], ['age=' + queryString.escape('j:' + JSON.stringify({}))])
+  })
+
+  test('set encrypted cookie when encryption is set to true', async function (assert) {
+    const SECRET = Math.random().toString(36).substr(2, 16)
+    const valueToBe = sig.sign('22', SECRET)
+    const encrypter = simpleEncryptor({
+      key: SECRET,
+      hmac: false
+    })
+
+    const server = http.createServer(function (req, res) {
+      Cookie.create(res, 'age', 22, {}, SECRET, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    const value = res.headers['set-cookie'][0].replace('age=', '')
+    assert.equal(encrypter.decrypt(queryString.unescape(value)), `s:${valueToBe}`)
+  })
+
+  test('set object as encrypted cookie', async function (assert) {
+    const SECRET = Math.random().toString(36).substr(2, 16)
+    const valueToBe = sig.sign(`j:${JSON.stringify({name: 'virk'})}`, SECRET)
+    const encrypter = simpleEncryptor({
+      key: SECRET,
+      hmac: false
+    })
+
+    const server = http.createServer(function (req, res) {
+      Cookie.create(res, 'name', {name: 'virk'}, {}, SECRET, true)
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    const value = res.headers['set-cookie'][0].replace('name=', '')
+    assert.equal(encrypter.decrypt(queryString.unescape(value)), `s:${valueToBe}`)
+  })
+
+  test('set expiry to past when clear cookie is called', async function (assert) {
+    const server = http.createServer(function (req, res) {
+      Cookie.clear(res, 'name')
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.deepEqual(res.headers['set-cookie'], ['name=; Expires=Thu, 01 Jan 1970 00:00:00 GMT'])
   })
 })
