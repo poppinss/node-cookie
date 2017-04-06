@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "coveralls": "^2.13.0",
+    "cz-conventional-changelog": "^2.0.0",
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
     "nyc": "^10.2.0",
@@ -42,5 +43,10 @@
   "bugs": {
     "url": "https://github.com/poppinss/node-cookie/issues"
   },
-  "homepage": "https://github.com/poppinss/node-cookie#readme"
+  "homepage": "https://github.com/poppinss/node-cookie#readme",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
