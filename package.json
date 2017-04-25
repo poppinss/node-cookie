@@ -1,6 +1,6 @@
 {
   "name": "node-cookie",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "sign, encrypt and parse http cookies",
   "main": "index.js",
   "scripts": {
