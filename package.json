@@ -7,9 +7,9 @@
     "lint": "standard",
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
-    "test:local": "node --harmony-async-await ./node_modules/.bin/japa",
+    "test:local": "FORCE_COLOR=true node bin/index.js --local",
     "test": "./node_modules/.bin/nyc npm run test:local",
-    "test:win": "node --harmony-async-await ./node_modules/japa-cli/index.js",
+    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
@@ -29,6 +29,7 @@
     "cz-conventional-changelog": "^2.0.0",
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
+    "lodash": "^4.17.4",
     "nyc": "^10.2.0",
     "standard": "^10.0.0",
     "supertest": "^3.0.0"
@@ -48,5 +49,10 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+ "nyc": {
+    "include": [
+      "src"
+    ]
   }
 }

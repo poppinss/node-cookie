@@ -13,9 +13,16 @@ const test = require('japa')
 const supertest = require('supertest')
 const http = require('http')
 const sig = require('cookie-signature')
-const Cookie = require('../')
 const queryString = require('querystring')
 const simpleEncryptor = require('simple-encryptor')
+const _ = require('lodash')
+
+const Cookie = require('../')
+
+const getSecret = function () {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  return _.map(_.range(0, 18), (num) => chars.charAt(Math.floor(Math.random() * chars.length))).join('')
+}
 
 test.group('Parse Cookies', function () {
   test('return an empty object when no cookies have been set', async function (assert) {
@@ -139,7 +146,7 @@ test.group('Parse Cookies', function () {
   })
 
   test('parse encrypted cookies', async function (assert) {
-    const SECRET = Math.random().toString(36).substr(2, 16)
+    const SECRET = getSecret()
     const encrypter = simpleEncryptor({
       key: SECRET,
       hmac: false
@@ -158,7 +165,7 @@ test.group('Parse Cookies', function () {
   })
 
   test('return encrypted value when decrypt is set to false', async function (assert) {
-    const SECRET = Math.random().toString(36).substr(2, 16)
+    const SECRET = getSecret()
     const encrypter = simpleEncryptor({
       key: SECRET,
       hmac: false
@@ -177,14 +184,14 @@ test.group('Parse Cookies', function () {
   })
 
   test('return null when secret mis-match', async function (assert) {
-    const SECRET = Math.random().toString(36).substr(2, 16)
+    const SECRET = getSecret()
     const encrypter = simpleEncryptor({
       key: SECRET,
       hmac: false
     })
 
     const server = http.createServer(function (req, res) {
-      const cookies = Cookie.parse(req, Math.random().toString(36).substr(2, 16), true)
+      const cookies = Cookie.parse(req, getSecret(), true)
       res.writeHead(200, {'content-type': 'application/json'})
       res.write(JSON.stringify({cookies}))
       res.end()
@@ -196,7 +203,7 @@ test.group('Parse Cookies', function () {
   })
 
   test('parse a single cookie', async function (assert) {
-    const SECRET = Math.random().toString(36).substr(2, 16)
+    const SECRET = getSecret()
     const encrypter = simpleEncryptor({
       key: SECRET,
       hmac: false
@@ -289,7 +296,7 @@ test.group('Set Cookies', function () {
   })
 
   test('set encrypted cookie when encryption is set to true', async function (assert) {
-    const SECRET = Math.random().toString(36).substr(2, 16)
+    const SECRET = getSecret()
     const valueToBe = sig.sign('22', SECRET)
     const encrypter = simpleEncryptor({
       key: SECRET,
@@ -308,7 +315,7 @@ test.group('Set Cookies', function () {
   })
 
   test('set object as encrypted cookie', async function (assert) {
-    const SECRET = Math.random().toString(36).substr(2, 16)
+    const SECRET = getSecret()
     const valueToBe = sig.sign(`j:${JSON.stringify({name: 'virk'})}`, SECRET)
     const encrypter = simpleEncryptor({
       key: SECRET,
