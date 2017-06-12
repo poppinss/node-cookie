@@ -3,22 +3,18 @@
 
 > Easily parse and write signed & encrypted cookies on Node.js HTTP requests.
 
-<br />
-
-<p align="center">
-  <a href="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png">
-    <img src="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png" width="600px" />
-  </a>
-</p>
-
-<br />
-
----
-
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Appveyor][appveyor-image]][appveyor-url]
+[![Coveralls][coveralls-image]][coveralls-url]
 
+<a href="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png">
+<img src="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png" width="300px" align="right" vspace="20px" />
+</a>
+
+`node-cookie` makes it simpler to create **encrypted** and **signed** cookies for HTTP requests.
+
+You can use it with any framework or library of your choice.
 
 ## See also
 
@@ -185,7 +181,8 @@ nodeCookie.clear(res, 'sessionId')
 
 ----
 
-[appveyor-image]: https://ci.appveyor.com/api/projects/status/github/poppinss/node-req?branch=master&svg=true&passingText=Passing%20On%20Windows
+[appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/node-cookie/master.svg?style=flat-square
+
 [appveyor-url]: https://ci.appveyor.com/project/thetutlage/node-cookie
 
 [npm-image]: https://img.shields.io/npm/v/node-cookie.svg?style=flat-square
@@ -193,3 +190,7 @@ nodeCookie.clear(res, 'sessionId')
 
 [travis-image]: https://img.shields.io/travis/poppinss/node-cookie/master.svg?style=flat-square
 [travis-url]: https://travis-ci.org/poppinss/node-cookie
+
+[coveralls-image]: https://img.shields.io/coveralls/poppinss/node-cookie/develop.svg?style=flat-square
+
+[coveralls-url]: https://coveralls.io/github/poppinss/node-cookie
