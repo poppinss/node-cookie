@@ -1,12 +1,16 @@
 {
   "name": "node-cookie",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "sign, encrypt and parse http cookies",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && istanbul cover _mocha --report lcovonly -- -R spec test && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "coverage": "npm run lint && istanbul cover _mocha test --bail",
-    "lint": "standard test/*.js src/**/*.js"
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "FORCE_COLOR=true node bin/index.js --local",
+    "test": "./node_modules/.bin/nyc npm run test:local",
+    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "cookies",
@@ -16,21 +20,19 @@
   "author": "amanvirk",
   "license": "MIT",
   "dependencies": {
-    "cookie": "^0.2.2",
+    "cookie": "^0.3.1",
     "cookie-signature": "^1.0.6",
-    "debug": "^2.2.0",
-    "keygrip": "git://github.com/poppinss/keygrip.git#develop"
+    "simple-encryptor": "^1.1.0"
   },
   "devDependencies": {
-    "chai": "^3.3.0",
-    "co-mocha": "^1.1.2",
-    "co-supertest": "0.0.10",
-    "coveralls": "^2.11.4",
-    "istanbul": "^0.3.22",
-    "mocha": "^2.3.3",
-    "mocha-lcov-reporter": "^1.0.0",
-    "standard": "^5.4.1",
-    "supertest": "^1.1.0"
+    "coveralls": "^2.13.1",
+    "cz-conventional-changelog": "^2.0.0",
+    "japa": "^1.0.3",
+    "japa-cli": "^1.0.1",
+    "lodash": "^4.17.4",
+    "nyc": "^11.0.2",
+    "standard": "^10.0.2",
+    "supertest": "^3.0.0"
   },
   "directories": {
     "test": "test"
@@ -42,5 +44,15 @@
   "bugs": {
     "url": "https://github.com/poppinss/node-cookie/issues"
   },
-  "homepage": "https://github.com/poppinss/node-cookie#readme"
+  "homepage": "https://github.com/poppinss/node-cookie#readme",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "nyc": {
+    "include": [
+      "src"
+    ]
+  }
 }
