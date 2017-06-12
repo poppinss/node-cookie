@@ -25,13 +25,13 @@
     "simple-encryptor": "^1.1.0"
   },
   "devDependencies": {
-    "coveralls": "^2.13.0",
+    "coveralls": "^2.13.1",
     "cz-conventional-changelog": "^2.0.0",
     "japa": "^1.0.3",
     "japa-cli": "^1.0.1",
     "lodash": "^4.17.4",
-    "nyc": "^10.2.0",
-    "standard": "^10.0.0",
+    "nyc": "^11.0.2",
+    "standard": "^10.0.2",
     "supertest": "^3.0.0"
   },
   "directories": {
@@ -50,7 +50,7 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
- "nyc": {
+  "nyc": {
     "include": [
       "src"
     ]
