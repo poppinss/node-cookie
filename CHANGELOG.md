@@ -1,3 +1,18 @@
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/poppinss/node-cookie/compare/v2.0.0...v2.0.1) (2017-08-01)
+
+
+### Bug Fixes
+
+* use forked keygrip ([2961a1b](https://github.com/poppinss/node-cookie/commit/2961a1b))
+
+
+### Features
+
+* **cookie:** decouple cookie singing and encryption ([2554511](https://github.com/poppinss/node-cookie/commit/2554511))
+
+
+
 <a name="2.0.0"></a>
 # 2.0.0 (2017-06-12)
 
