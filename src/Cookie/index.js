@@ -314,6 +314,33 @@ Cookie.get = function (req, key, secret = null, decrypt = false, cookies = null)
 }
 
 /**
+ * Pack the cookie value by properly formatting,
+ * signing and encrypting it
+ *
+ * @method packValue
+ *
+ * @param  {String}   value
+ * @param  {String}   secret
+ * @param  {Boolean}  encrypt
+ *
+ * @return {String}
+ */
+Cookie.packValue = function (value, secret, encrypt) {
+  value = Cookie._stringifyJSON(value)
+  value = Cookie._signValue(value, secret)
+
+  /**
+   * Encrypt the cookie value only when secret is defined
+   * and encrypt is set to true
+   */
+  if (secret && encrypt) {
+    value = Cookie._encrypt(value, secret)
+  }
+
+  return String(value)
+}
+
+/**
  * Write cookie to the HTTP response object. It will append
  * duplicate cookies to the `Set-Cookie` header, since
  * browsers discard the duplicate cookies by themselves
@@ -341,18 +368,7 @@ Cookie.get = function (req, key, secret = null, decrypt = false, cookies = null)
  * ```
  */
 Cookie.create = function (res, key, value, options = {}, secret = null, encrypt = false) {
-  value = Cookie._stringifyJSON(value)
-  value = Cookie._signValue(value, secret)
-
-  /**
-   * Encrypt the cookie value only when secret is defined
-   * and encrypt is set to true
-   */
-  if (secret && encrypt) {
-    value = Cookie._encrypt(value, secret)
-  }
-
-  const cookie = parser.serialize(key, String(value), options)
+  const cookie = parser.serialize(key, Cookie.packValue(value, secret, encrypt), options)
   Cookie._append(res, key, cookie)
 }
 
