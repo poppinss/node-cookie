@@ -306,7 +306,8 @@ Cookie.get = function (req, key, secret = null, decrypt = false, cookies = null)
 
 /**
  * Unpack cookie value by unsigning and decrypting
- * it.
+ * it. Infact you can unpack any value packed via
+ * the `packValue` method.
  *
  * @method unPackValue
  *
@@ -330,14 +331,14 @@ Cookie.unPackValue = function (value, secret, decrypt) {
 }
 
 /**
- * Pack the cookie value by properly formatting,
- * signing and encrypting it
+ * Pack the value by properly formatting,
+ * signing and encrypting it.
  *
  * @method packValue
  *
  * @param  {String}   value
- * @param  {String}   secret
- * @param  {Boolean}  encrypt
+ * @param  {String}   [secret = null]
+ * @param  {Boolean}  [encrypt = false]
  *
  * @return {String}
  */

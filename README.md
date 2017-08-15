@@ -181,6 +181,56 @@ nodeCookie.clear(res, 'sessionId')
 
 ----
 
+### packValue
+
+Pack the value by properly formatting, signing and encrypting it.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| value | String | Yes | &nbsp; |
+| secret | String | No | &nbsp; |
+| encrypt  | Boolean | No | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+nodeCookie.packValue('hello')
+
+// or
+nodeCookie.packValue('hello', 'somelongsecret', true)
+```
+
+----
+### unPackValue
+
+Unpack cookie value by unsigning and decrypting it. Infact you can unpack any value packed via the `packValue` method.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| value | String | Yes | &nbsp; |
+| secret | String | No | &nbsp; |
+| decrypt  | Boolean | No | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+const packedValue = nodeCookie.packValue('hello', 'somelongsecret', true)
+
+nodeCookie.unPackValue(packedValue, 'somelongsecret', true)
+// returns hello
+```
+
+----
+
+
 [appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/node-cookie/master.svg?style=flat-square
 
 [appveyor-url]: https://ci.appveyor.com/project/thetutlage/node-cookie
