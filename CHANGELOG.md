@@ -1,3 +1,13 @@
+<a name="2.0.2"></a>
+## [2.0.2](https://github.com/poppinss/node-cookie/compare/v2.0.1...v2.0.2) (2017-08-15)
+
+
+### Features
+
+* **cookie:** extract unpacking cookie to it's own method ([e399992](https://github.com/poppinss/node-cookie/commit/e399992))
+
+
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/poppinss/node-cookie/compare/v2.0.0...v2.0.1) (2017-08-01)
 
