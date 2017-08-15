@@ -301,27 +301,44 @@ Cookie.get = function (req, key, secret = null, decrypt = false, cookies = null)
     return null
   }
 
+  return this.unPackValue(cookie, secret, decrypt)
+}
+
+/**
+ * Unpack cookie value by unsigning and decrypting
+ * it. Infact you can unpack any value packed via
+ * the `packValue` method.
+ *
+ * @method unPackValue
+ *
+ * @param  {String}    value
+ * @param  {String}    secret
+ * @param  {Boolean}   decrypt
+ *
+ * @return {String}
+ */
+Cookie.unPackValue = function (value, secret, decrypt) {
   /**
    * Decrypt value when cookie secret is defined
    * and decrypt is set to true.
    */
   if (secret && decrypt) {
-    cookie = Cookie._decrypt(cookie, secret)
+    value = Cookie._decrypt(value, secret)
   }
 
-  cookie = cookie ? Cookie._unSignValue(cookie, secret) : null
-  return cookie ? Cookie._parseJSON(cookie) : null
+  value = value ? Cookie._unSignValue(value, secret) : null
+  return value ? Cookie._parseJSON(value) : null
 }
 
 /**
- * Pack the cookie value by properly formatting,
- * signing and encrypting it
+ * Pack the value by properly formatting,
+ * signing and encrypting it.
  *
  * @method packValue
  *
  * @param  {String}   value
- * @param  {String}   secret
- * @param  {Boolean}  encrypt
+ * @param  {String}   [secret = null]
+ * @param  {Boolean}  [encrypt = false]
  *
  * @return {String}
  */

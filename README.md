@@ -8,8 +8,8 @@
 [![Appveyor][appveyor-image]][appveyor-url]
 [![Coveralls][coveralls-image]][coveralls-url]
 
-<a href="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png">
-<img src="http://i1117.photobucket.com/albums/k594/thetutlage/poppins-1_zpsg867sqyl.png" width="300px" align="right" vspace="20px" />
+<a href="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1502279403/poppinss_z8uk2j.png">
+<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1502279403/poppinss_z8uk2j.png" width="300px" align="right" vspace="20px" />
 </a>
 
 `node-cookie` makes it simpler to create **encrypted** and **signed** cookies for HTTP requests.
@@ -180,6 +180,56 @@ nodeCookie.clear(res, 'sessionId')
 ```
 
 ----
+
+### packValue
+
+Pack the value by properly formatting, signing and encrypting it.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| value | String | Yes | &nbsp; |
+| secret | String | No | &nbsp; |
+| encrypt  | Boolean | No | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+nodeCookie.packValue('hello')
+
+// or
+nodeCookie.packValue('hello', 'somelongsecret', true)
+```
+
+----
+### unPackValue
+
+Unpack cookie value by unsigning and decrypting it. Infact you can unpack any value packed via the `packValue` method.
+
+**Params**
+
+| Param | Type | Required | Description |
+|-----|-------|------|------|
+| value | String | Yes | &nbsp; |
+| secret | String | No | &nbsp; |
+| decrypt  | Boolean | No | &nbsp; |
+
+**Returns**
+String
+
+**Example**
+```js
+const packedValue = nodeCookie.packValue('hello', 'somelongsecret', true)
+
+nodeCookie.unPackValue(packedValue, 'somelongsecret', true)
+// returns hello
+```
+
+----
+
 
 [appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/node-cookie/master.svg?style=flat-square
 
