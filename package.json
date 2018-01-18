@@ -3,6 +3,7 @@
   "version": "2.0.2",
   "description": "sign, encrypt and parse http cookies",
   "main": "index.js",
+  "files": ["index.js"],
   "scripts": {
     "lint": "standard",
     "pretest": "npm run lint",
@@ -22,16 +23,16 @@
   "dependencies": {
     "cookie": "^0.3.1",
     "cookie-signature": "^1.0.6",
-    "simple-encryptor": "^1.1.0"
+    "simple-encryptor": "^1.1.1"
   },
   "devDependencies": {
-    "coveralls": "^2.13.1",
-    "cz-conventional-changelog": "^2.0.0",
-    "japa": "^1.0.3",
+    "coveralls": "^3.0.0",
+    "cz-conventional-changelog": "^2.1.0",
+    "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
     "lodash": "^4.17.4",
-    "nyc": "^11.0.2",
-    "standard": "^10.0.2",
+    "nyc": "^11.4.1",
+    "standard": "^10.0.3",
     "supertest": "^3.0.0"
   },
   "directories": {
@@ -52,7 +53,7 @@
   },
   "nyc": {
     "include": [
-      "src"
+      "index.js"
     ]
   }
 }

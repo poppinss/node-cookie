@@ -17,7 +17,7 @@ const queryString = require('querystring')
 const simpleEncryptor = require('simple-encryptor')
 const _ = require('lodash')
 
-const Cookie = require('../')
+const Cookie = require('..')
 
 const getSecret = function () {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
