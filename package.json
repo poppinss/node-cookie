@@ -23,7 +23,7 @@
   "author": "amanvirk",
   "license": "MIT",
   "dependencies": {
-    "cookie": "^0.3.1",
+    "cookie": "^0.4.0",
     "cookie-signature": "^1.1.0",
     "simple-encryptor": "^1.4.0"
   },
