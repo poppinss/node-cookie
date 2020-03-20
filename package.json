@@ -9,11 +9,7 @@
   "scripts": {
     "lint": "standard",
     "pretest": "npm run lint",
-    "posttest": "npm run coverage",
-    "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "./node_modules/.bin/nyc npm run test:local",
-    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "test": "node japaFile.js"
   },
   "keywords": [
     "cookies",
@@ -28,14 +24,12 @@
     "simple-encryptor": "^3.0.0"
   },
   "devDependencies": {
-    "coveralls": "^3.0.2",
-    "cz-conventional-changelog": "^2.1.0",
-    "japa": "^1.0.6",
+    "cz-conventional-changelog": "^3.1.0",
+    "japa": "^3.0.1",
     "japa-cli": "^1.0.1",
-    "lodash": "^4.17.10",
-    "nyc": "^12.0.2",
-    "standard": "^11.0.1",
-    "supertest": "^3.1.0"
+    "lodash": "^4.17.15",
+    "standard": "^14.3.3",
+    "supertest": "^4.0.2"
   },
   "directories": {
     "test": "test"

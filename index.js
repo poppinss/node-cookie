@@ -48,7 +48,7 @@ const getEncrypter = function (secret) {
  *
  * @module Cookie
  */
-let Cookie = exports = module.exports = {}
+const Cookie = exports = module.exports = {}
 
 /**
  * Parses cookie value from a JSON marked string into
@@ -211,7 +211,7 @@ Cookie._decrypt = function (value, secret) {
  * @private
  */
 Cookie._parseCookies = function (req) {
-  const cookieString = req.headers['cookie']
+  const cookieString = req.headers.cookie
   return cookieString ? parser.parse(cookieString) : {}
 }
 
@@ -289,7 +289,7 @@ Cookie.parse = function (req, secret = null, decrypt = false) {
  */
 Cookie.get = function (req, key, secret = null, decrypt = false, cookies = null) {
   cookies = cookies || Cookie._parseCookies(req)
-  let cookie = cookies[key]
+  const cookie = cookies[key]
 
   /**
    * Return null when cookie value does not
