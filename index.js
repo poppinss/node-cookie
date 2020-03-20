@@ -160,8 +160,8 @@ Cookie._unSignValue = function (value, secret = null) {
  * @private
  */
 Cookie._append = function (res, cookie) {
-  const cookies = res.getHeader('Set-Cookie') || []
-  Array.isArray(cookies) ? cookies.push(cookie) : [cookies].push(cookie)
+  let cookies = res.getHeader('Set-Cookie') || []
+  Array.isArray(cookies) ? cookies.push(cookie) : (cookies = [cookies]).push(cookie)
   res.setHeader('Set-Cookie', cookies.map(String))
 }
 

@@ -247,6 +247,20 @@ test.group('Set Cookies', function () {
     assert.deepEqual(res.headers['set-cookie'], ['name=foo'])
   })
 
+  test('set cookies after an intermediate middleware has already set one', async function (assert) {
+    const server = http.createServer(function (req, res) {
+      // Middleware sets a single cookie outside of this lib
+      res.setHeader('Set-Cookie', 'first=foo')
+
+      Cookie.create(res, 'second', 'bar')
+      res.writeHead(200, {'content-type': 'application/json'})
+      res.end()
+    })
+
+    const res = await supertest(server).get('/').expect(200)
+    assert.deepEqual(res.headers['set-cookie'], ['first=foo', 'second=bar'])
+  })
+
   test('set cookie options when defined', async function (assert) {
     const server = http.createServer(function (req, res) {
       Cookie.create(res, 'name', 'foo', { path: '/blog' })
