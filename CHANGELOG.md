@@ -1,3 +1,13 @@
+## [2.1.2](https://github.com/poppinss/node-cookie/compare/v2.1.1...v2.1.2) (2020-03-20)
+
+
+### Bug Fixes
+
+* reassign cookies var to array if needed (fixes [#8](https://github.com/poppinss/node-cookie/issues/8)) ([#9](https://github.com/poppinss/node-cookie/issues/9)) ([7e051fe](https://github.com/poppinss/node-cookie/commit/7e051fef9b5187c5a8315f4e8acd757fbbd9c315))
+* update cookie dependency cookie to 0.4.0 ([#11](https://github.com/poppinss/node-cookie/issues/11)) ([c079cfa](https://github.com/poppinss/node-cookie/commit/c079cfaee7469624476a59f79e7cf1c031ba3b46))
+
+
+
 <a name="2.1.1"></a>
 ## [2.1.1](https://github.com/poppinss/node-cookie/compare/v2.1.0...v2.1.1) (2018-08-22)
 
